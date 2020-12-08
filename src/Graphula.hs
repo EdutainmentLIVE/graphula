@@ -168,9 +168,6 @@ instance MonadTrans (GraphulaT n) where
   lift = GraphulaT . lift
 
 instance MonadUnliftIO m => MonadUnliftIO (GraphulaT n m) where
-  {-# INLINE askUnliftIO #-}
-  askUnliftIO = GraphulaT $ withUnliftIO $ \u ->
-    return $ UnliftIO $ unliftIO u . runGraphulaT'
   {-# INLINE withRunInIO #-}
   withRunInIO inner =
     GraphulaT $ withRunInIO $ \run -> inner $ run . runGraphulaT'
@@ -223,9 +220,6 @@ newtype GraphulaIdempotentT m a =
   deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader (IORef (m ())))
 
 instance MonadUnliftIO m => MonadUnliftIO (GraphulaIdempotentT m) where
-  {-# INLINE askUnliftIO #-}
-  askUnliftIO = GraphulaIdempotentT $ withUnliftIO $ \u ->
-    return $ UnliftIO $ unliftIO u . runGraphulaIdempotentT'
   {-# INLINE withRunInIO #-}
   withRunInIO inner = GraphulaIdempotentT $ withRunInIO $ \run ->
     inner $ run . runGraphulaIdempotentT'
